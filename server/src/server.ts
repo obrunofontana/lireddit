@@ -18,7 +18,6 @@ import cors from 'cors';
 
 const PORT = 4000;
 
-
 const main = async () => {
   const orm = await MikroORM.init(microConfig);
   await orm.getMigrator().up();
