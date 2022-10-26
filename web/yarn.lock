@@ -2088,12 +2088,20 @@
   dependencies:
     "@types/node" "*"
 
-"@urql/core@^3.0.3":
+"@urql/core@>=3.0.5", "@urql/core@^3.0.3":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@urql/core/-/core-3.0.5.tgz#a26c326dd788d6d6abb839493bce86147f5a45c9"
   integrity sha512-6/1HG+WEAcPs+hXSFnxWBTWkNUwa8dj2cHysWokMaFIbAioGtUaSdxp2q9FDMtWAIGdc640NFSt2B8itGLdoAA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
+    wonka "^6.0.0"
+
+"@urql/exchange-graphcache@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@urql/exchange-graphcache/-/exchange-graphcache-5.0.3.tgz#b1670c173dc99b0a06b8f2d3fe33b111d7dcc66f"
+  integrity sha512-gDAECRdP1JUStOxOlXV02ftjpfaV0ktoZ2kPzwxhr93mdVZpgvoYatzXknxK9y5zcj+U9QEhf19Hoht4Bgkotg==
+  dependencies:
+    "@urql/core" ">=3.0.5"
     wonka "^6.0.0"
 
 "@whatwg-node/fetch@^0.3.0":
