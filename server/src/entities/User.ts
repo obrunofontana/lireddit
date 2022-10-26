@@ -20,6 +20,10 @@ export class User {
   @Property({ type: 'text', unique: true }) // property é do MikroOrm
   username!: string;
 
+  @Field() 
+  @Property({ type: 'text', unique: true })
+  email!: string;
+
   @Property({ type: 'text' }) // property é do MikroOrm
   password!: string;
 }
