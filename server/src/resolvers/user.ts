@@ -102,7 +102,7 @@ export class UserResolver {
     if (!user) {
       return {
         errors: [{
-          field: 'username',
+          field: 'usernameOrEmail',
           message: 'Usuário não encontrado.'
         }]
       }
