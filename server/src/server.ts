@@ -14,6 +14,7 @@ import session from 'express-session'
 import { createClient } from 'redis';
 import connectRedis from 'connect-redis';
 import { MyContext } from './types';
+import cors from 'cors';
 
 const PORT = 4000;
 
@@ -28,12 +29,18 @@ const main = async () => {
   const redisClient = createClient({ legacyMode: true });
   redisClient.connect().catch(console.error);
 
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
+
   app.use(
     session({
       name: 'qid',
       store: new RedisStore({ 
         client: redisClient,
-        disableTouch: true,
+        disableTouch: true, 
+        
       }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 265 * 10, // 10 anos
@@ -60,7 +67,7 @@ const main = async () => {
 
   await apolloServer.start();
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(PORT, () => {
     console.log(`Server started at ${PORT}`);
