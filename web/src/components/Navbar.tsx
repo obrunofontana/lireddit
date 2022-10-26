@@ -2,10 +2,13 @@ import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
+import { isServer } from '../utils/isServer';
 
 const Navbar: React.FC = () => {
   const router = useRouter();
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({
+    pause: isServer() // como a index esta sendo sendo renderizada do lado server, aguarda ser renderizado para chamar
+  });
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
 
   let body = null;
@@ -19,8 +22,8 @@ const Navbar: React.FC = () => {
   if (fetching) {
     body = null;  // data is loading
   } else if (!data?.me) {
-    body = (
-      <>
+    body = !isServer() ? (
+      <>       
         <Link color="white" href="/login" mr={2}>
           Login
         </Link>
@@ -29,7 +32,7 @@ const Navbar: React.FC = () => {
           Register
         </Link>
       </>
-    )
+    ) : null
   } else {
     body = (
       <Flex>
