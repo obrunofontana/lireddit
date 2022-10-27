@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 
-import { MikroORM } from '@mikro-orm/core';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
 import connectRedis from 'connect-redis';
@@ -9,19 +8,31 @@ import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
 import { buildSchema } from 'type-graphql';
+import { DataSource } from 'typeorm';
 
 import { COOKIE_NAME, __prod__ } from './constants';
-import microConfig from './mikro-orm.config';
-import { HelloResolver } from './resolvers/hello';
-import { PostResolver } from './resolvers/post';
-import { UserResolver } from './resolvers/user';
+import { Post, User } from './entities';
+import { HelloResolver, PostResolver, UserResolver } from './resolvers';
 import { MyContext } from './types';
 
 const PORT = 4000;
 
 const main = async () => {
-  const orm = await MikroORM.init(microConfig);
-  await orm.getMigrator().up();
+  const dataSource = new DataSource({
+    type: "postgres",
+    host: "localhost",
+    port: 5432,
+    database: 'lireddit',
+    username: 'postgres',
+    password: 'root',
+    synchronize: true, 
+    logging: true,
+    entities: [Post, User],
+    // subscribers: [],
+    // migrations: [],
+  });
+
+  await dataSource.initialize();
   
   const app = express();
 
@@ -60,7 +71,7 @@ const main = async () => {
     plugins: [
       ApolloServerPluginLandingPageGraphQLPlayground(),
     ],
-    context: ({ req, res }): MyContext => ({ em: orm.em, req , res, redis })
+    context: ({ req, res }): MyContext => ({ dataSource, req , res, redis })
   });
 
   await apolloServer.start();

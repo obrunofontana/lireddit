@@ -1,26 +1,22 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
   @Field()
-  @PrimaryKey()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Property({ type: 'date' })
-  createdAt?: Date = new Date();
+  @CreateDateColumn() // ORM 
+  createdAt?: Date;
 
   @Field()
-  @Property({ type: 'date', onUpdate: () => new Date() })
-  updatedAt?: Date = new Date();
+  @UpdateDateColumn() // ORM
+  updatedAt?: Date;
 
-  @Field() // field é pro graphql entender
-  @Property({ type: 'text' }) // property é do MikroOrm
+  @Field() // field é pro graphql entender, se quiser ocultar um campo só não decorar com este decorator
+  @Column({ type: 'text' }) // ORM
   title!: string;
-
-  constructor(title: string) {
-    this.title = title;
-  }
 }

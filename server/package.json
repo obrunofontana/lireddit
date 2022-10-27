@@ -8,8 +8,7 @@
     "dev": "nodemon dist/server.js",
     "start": "node dist/server.js",
     "start2": "ts-node src/server.ts",
-    "dev2": "nodemon --exec dist/server.js",
-    "create:migration": "mikro-orm migration:create"
+    "dev2": "nodemon --exec dist/server.js"
   },
   "devDependencies": {
     "@types/connect-redis": "^0.0.18",
@@ -25,10 +24,6 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^5.4.2",
-    "@mikro-orm/core": "^5.4.2",
-    "@mikro-orm/migrations": "^5.4.2",
-    "@mikro-orm/postgresql": "^5.4.2",
     "apollo-server-core": "^3.10.3",
     "apollo-server-express": "^3.10.3",
     "argon2": "^0.30.1",
@@ -42,6 +37,7 @@
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
+    "typeorm": "^0.3.10",
     "uuid": "^9.0.0"
   },
   "mikro-orm": {
