@@ -34,8 +34,8 @@ const Register: React.FC = () => {
           <Form>
             <InputField 
               name='username'
-              placeholder='Username'
-              label='Username'
+              placeholder='Usuário'
+              label='Usuário'
             />
 
             <Box mt={4}>
@@ -49,14 +49,14 @@ const Register: React.FC = () => {
             <Box mt={4}>
               <InputField 
                 name='password'
-                placeholder='password'
-                label='Password'
+                placeholder='Senha'
+                label='Senha'
                 type='password'
               />
             </Box>
             
             <Button mt={4} color='teal' type='submit' isLoading={isSubmitting}>
-              Register
+              Cadastrar
             </Button>
           </Form>
         )}

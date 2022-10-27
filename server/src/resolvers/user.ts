@@ -1,11 +1,14 @@
+import argon2 from 'argon2';
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { v4 } from 'uuid';
+
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { User } from "../entities/User";
 import { MyContext } from "../types";
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
-import argon2 from 'argon2';
-import { COOKIE_NAME } from "../constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { sendEmail } from "../utils/sendEmail";
 import { validateIsValidEmail } from "../utils/validateIsValidEmail";
 import { validateRegister } from "../utils/validateRegister";
+import { UsernamePasswordInput } from "./UsernamePasswordInput";
 
 @ObjectType()
 class FieldError {
@@ -27,15 +30,79 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg('token') token: string, 
+    @Arg('newPassword') newPassword: string, 
+    @Ctx() { em, redis, req }: MyContext
+  ): Promise<UserResponse> {
+    if (newPassword.length < 4) {
+      return {
+        errors: [{
+          field: 'newPassword',
+          message: 'A nova senha é menor que 4 caracteres.'
+        }]
+      }
+    }
+    
+    const key = `${FORGET_PASSWORD_PREFIX}${token}`;
+    const userId = await redis.get(key);
+    if (!userId) { 
+      return {
+        errors: [{
+          field: 'token',
+          message: 'Token expirado'
+        }]
+      }
+    }
+    
+    const user = await em.findOne(User, { id: parseInt(userId) });
+    
+    if (!user) {
+      return {
+        errors: [{
+          field: 'token',
+          message: 'Usuário não existe mais.'
+        }]
+      }
+    }
+
+    const newPasswordHashed = await argon2.hash(newPassword);
+
+    user.password = newPasswordHashed;
+
+    await em.persistAndFlush(user);
+
+    await redis.del(key); // depois que altera a senha o token é invalidado;
+
+    // faz o login do usuário após a troca de senha;
+    req.session.userId = user.id;
+
+    return {
+      user
+    }
+  }
+
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg('email') email: string, 
-    // @Ctx() { em }: MyContext
+    @Ctx() { em, redis }: MyContext
   ) {
-    // const user = await em.findOne(User, { email });
+    const user = await em.findOne(User, { email });
+
+    if (!user) {
+      return true;
+    }
+
+    const token = v4();
+
+    redis.set(`${FORGET_PASSWORD_PREFIX}${token}`, user.id, 'EX', 60 * 60 * 24 /* 24 horas */);
+
+    const body = `<a href="http://localhost:3000/change-password/${token}">Reset password</a>`;
+    await sendEmail(email, body, 'Reset password');
+
     return true;
   }
-  
   
   @Query(() => User, { nullable: true })
   async me (

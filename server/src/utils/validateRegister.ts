@@ -5,14 +5,14 @@ export const validateRegister = (options: UsernamePasswordInput) => {
   if (options.username.length < 4) {
     return [{
       field: 'username',
-      message: 'Username must be at least 4 characters'
+      message: 'Username é menor que 4 caracteres.'
     }]
   }
 
   if (options.password.length < 4) {
     return [{
       field: 'password',
-      message: 'Password must be at least 4 characters'
+      message: 'A senha é menor que 4 caracteres.'
     }]
   }
 

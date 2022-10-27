@@ -1,20 +1,21 @@
 import 'reflect-metadata';
 
 import { MikroORM } from '@mikro-orm/core';
-import express from 'express'; 
-import { ApolloServer } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import { HelloResolver } from './resolvers/hello';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
-import { PostResolver } from './resolvers/post';
-import { UserResolver } from './resolvers/user';
+import { ApolloServer } from 'apollo-server-express';
+import connectRedis from 'connect-redis';
+import cors from 'cors';
+import express from 'express';
+import session from 'express-session';
+import Redis from 'ioredis';
+import { buildSchema } from 'type-graphql';
+
 import { COOKIE_NAME, __prod__ } from './constants';
 import microConfig from './mikro-orm.config';
-import session from 'express-session'
-import { createClient } from 'redis';
-import connectRedis from 'connect-redis';
+import { HelloResolver } from './resolvers/hello';
+import { PostResolver } from './resolvers/post';
+import { UserResolver } from './resolvers/user';
 import { MyContext } from './types';
-import cors from 'cors';
 
 const PORT = 4000;
 
@@ -25,8 +26,7 @@ const main = async () => {
   const app = express();
 
   const RedisStore = connectRedis(session);
-  const redisClient = createClient({ legacyMode: true });
-  redisClient.connect().catch(console.error);
+  const redis = new Redis();
 
   app.use(cors({
     origin: 'http://localhost:3000',
@@ -37,9 +37,8 @@ const main = async () => {
     session({
       name: COOKIE_NAME,
       store: new RedisStore({ 
-        client: redisClient,
+        client: redis,
         disableTouch: true, 
-        
       }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 265 * 10, // 10 anos
@@ -61,7 +60,7 @@ const main = async () => {
     plugins: [
       ApolloServerPluginLandingPageGraphQLPlayground(),
     ],
-    context: ({ req, res }): MyContext => ({ em: orm.em, req , res })
+    context: ({ req, res }): MyContext => ({ em: orm.em, req , res, redis })
   });
 
   await apolloServer.start();

@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Link } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
@@ -27,7 +27,7 @@ const Login: React.FC = () => {
           if (response.data?.login.errors?.length) {
             setErrors(toErrorMap(response.data?.login.errors));
           } else if (response.data?.login.user) {
-            router.push('/', {});
+            router.push('/', { pathname: '/' });
           }
 
           return response; 
@@ -37,20 +37,24 @@ const Login: React.FC = () => {
           <Form>
             <InputField 
               name='usernameOrEmail'
-              placeholder='Username or email'
-              label='Username or email'
+              placeholder='Usuário ou e-mail'
+              label='Usuário ou e-mail'
             />
             <Box mt={4}>
               <InputField 
                 name='password'
-                placeholder='password'
-                label='Password'
+                placeholder='Senha'
+                label='Senha'
                 type='password'
               />
             </Box>
 
+            <Box mt={2} color="primary">
+              <Link href='/forgot-password'>Esqueci minha senha</Link>
+            </Box>
+
             <Button mt={4} color='teal' type='submit' isLoading={isSubmitting}>
-              Login
+              Acessar
             </Button>
           </Form>
         )}

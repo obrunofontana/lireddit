@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 import React from 'react';
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
@@ -15,7 +16,6 @@ const Navbar: React.FC = () => {
 
   const onClickLogoutHandler = () => {
     logout({});
-    router.push('/login')
   }
 
 
@@ -23,14 +23,18 @@ const Navbar: React.FC = () => {
     body = null;  // data is loading
   } else if (!data?.me) {
     body = !isServer() ? (
-      <>       
-        <Link color="white" href="/login" mr={2}>
-          Login
-        </Link>
+      <>
+        <NextLink href="/login">
+          <Link color="white"  mr={2}>
+            Entrar
+          </Link>
+        </NextLink>       
 
-        <Link color="white" href="/register" >
-          Register
-        </Link>
+        <NextLink href="/register">
+          <Link color="white">
+            Cadastrar
+          </Link>
+        </NextLink>
       </>
     ) : null
   } else {
@@ -41,7 +45,7 @@ const Navbar: React.FC = () => {
         variant="link"
         isLoading={logoutFetching}
       >
-          Logout
+          Sair
         </Button>
       </Flex>
     )
