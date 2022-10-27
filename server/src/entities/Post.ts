@@ -1,5 +1,6 @@
-import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Field, Int, ObjectType } from "type-graphql";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -9,14 +10,29 @@ export class Post extends BaseEntity {
   id!: number;
 
   @Field()
-  @CreateDateColumn() // ORM 
+  @Column()
+  title!: string;
+
+  @Field()
+  @Column()
+  text!: string;
+
+  @Field(() => Int)
+  @Column({ type: 'int', default: 0 })
+  points!: string;
+
+  @Field()
+  @CreateDateColumn()
   createdAt?: Date;
 
   @Field()
-  @UpdateDateColumn() // ORM
+  @UpdateDateColumn()
   updatedAt?: Date;
 
-  @Field() // field é pro graphql entender, se quiser ocultar um campo só não decorar com este decorator
-  @Column({ type: 'text' }) // ORM
-  title!: string;
+  @Field()
+  @Column()
+  creatorId: number;
+
+  @ManyToOne(() => User, user => user.posts)
+  creator: User
 }

@@ -28,8 +28,6 @@ const main = async () => {
     synchronize: true, 
     logging: true,
     entities: [Post, User],
-    // subscribers: [],
-    // migrations: [],
   });
 
   await dataSource.initialize();
