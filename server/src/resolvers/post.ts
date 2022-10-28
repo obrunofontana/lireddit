@@ -15,8 +15,24 @@ class PostInput {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  posts (): Promise<Post[]> {
-    return Post.find();
+  async posts (
+    @Arg('limit', () => Int) limit: number,
+    @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+    @Ctx() { dataSource }: MyContext
+  ): Promise<Post[]> { 
+    const realLimit = Math.min(20, limit);
+
+     const builder = dataSource
+      .getRepository(Post)
+      .createQueryBuilder('p')
+      .limit(realLimit)
+      .orderBy('"createdAt"', 'DESC')
+    
+    if (cursor) { 
+      builder.where('"createdAt" < :cursor', { cursor: new Date(cursor) });
+    }
+
+    return builder.getMany();
   }
 
   @Query(() => Post, { nullable: true})
