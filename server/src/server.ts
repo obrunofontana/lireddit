@@ -14,6 +14,7 @@ import { COOKIE_NAME, __prod__ } from './constants';
 import { Post, User } from './entities';
 import { HelloResolver, PostResolver, UserResolver } from './resolvers';
 import { MyContext } from './types';
+import path from 'path';
 
 const PORT = 4000;
 
@@ -27,6 +28,7 @@ const main = async () => {
     password: 'root',
     synchronize: true, 
     logging: true,
+    migrations: [path.join(__dirname, './migration/*')],
     entities: [Post, User],
   });
 
