@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <Flex position="sticky" top={0} zIndex={1} bg="blackAlpha.800" color="white" >
+    <Flex position="sticky" top={0} zIndex={1} bg="black" color="white" >
       <Box p={4} ml={"auto"}>     
         {body}
       </Box>
