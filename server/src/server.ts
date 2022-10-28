@@ -19,11 +19,11 @@ const PORT = 4000;
 
 const main = async () => {
   const dataSource = new DataSource({
-    type: "postgres",
+    type: "mysql",
     host: "localhost",
-    port: 5432,
+    port: 3306,
     database: 'lireddit',
-    username: 'postgres',
+    username: 'root',
     password: 'root',
     synchronize: true, 
     logging: true,
